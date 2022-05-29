@@ -18,15 +18,16 @@ app.get('/cards', (req, res) => {
   res.send(cards);
 })
 
-// here down doesn't work properly
-
 app.get('/users/:id', (req, res) => {
-  const { name, about, avatar, _id } = req.params;
 
-  if (!users[_id]) {
+  if (!users[req.params.id]) {
     res.send({"message": "User ID not found"});
     return;
   }
 
-  res.send(users[_id]);
+  res.send(users[req.params.id]);
+})
+
+app.get('*', (req, res) => {
+  res.status(404).send({"message": "Requested resource not found"});
 })
