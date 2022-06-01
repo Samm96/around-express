@@ -1,5 +1,5 @@
-const fsPromises = require('fs').promises;
 const path = require('path');
+const fsPromises = require('fs').promises;
 
 const CARDS_PATH = path.join(__dirname, '../data/cards.json');
 
