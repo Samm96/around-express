@@ -1,5 +1,6 @@
 const fsPromises = require('fs').promises;
 const path = require('path');
+const User = require('../models/user');
 
 const USERS_PATH = path.join(__dirname, '../data/users.json');
 
@@ -34,7 +35,16 @@ const getUser = (req, res) => {
     });
 };
 
+const createUser = (req, res) => {
+  const { name, about, avatar } = req.body;
+
+  User.create({ name, about, avatar })
+    .then((user) => res.send({ data: user }))
+    .catch(() => res.status(500).send({ message: 'An error occurred while creating user' }));
+};
+
 module.exports = {
   getUser,
   getUsers,
+  createUser,
 };
