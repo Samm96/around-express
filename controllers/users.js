@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const { INVALID_DATA_ERROR, NOT_FOUND_ERROR, INT_SERVER_ERROR } = require('../utils/errors');
 
 const getUsers = (req, res) => {
   User.find({})
