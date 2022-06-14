@@ -1,4 +1,4 @@
-const regex = /(^http|https)?:\/\/(^w{3}\.)?\S{1,}\.([a-z]{3})\/(\S{1,})?/;
+const regex = /(^http|https)?:\/\/(^w{3}\.)?\S{1,}\.([a-z]{3})\/(\S{1,})?/gi;
 
 
 
