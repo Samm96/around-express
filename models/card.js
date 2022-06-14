@@ -13,9 +13,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Required field'],
     validate: {
-      validator: (v) => {
-        return linkRegex.test(v);
-      },
+      validator: (v) => linkRegex.test(v),
       message: 'This is not a valid URL'
     },
   },
