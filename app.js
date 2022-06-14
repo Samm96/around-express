@@ -11,6 +11,15 @@ mongoose.connect('mongodb://localhost:27017/aroundb');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// temp authorization solution
+app.use((req, res, next) => {
+  req.user = {
+    _id: '62a7e195f4764aa1f59daf17'
+  };
+
+  next();
+});
+
 app.use(routes);
 
 app.listen(PORT, () => {
