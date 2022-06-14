@@ -16,7 +16,7 @@ const cardSchema = new mongoose.Schema({
         return /(^http|https)?:\/\/?(^www\.)?\S{1,}\.[a-z]{3}?\/\S{1,}/.test(v);
       },
       message: 'This is not a valid URL'
-    }
+    },
   },
 
   owner: {
