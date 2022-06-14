@@ -7,7 +7,7 @@ const getUsers = (req, res) => {
       res.send(JSON.parse(users));
     })
     .catch(() => {
-      res.status(500).send({ message: 'An error has occurred with the server' });
+      res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
     });
 };
 
@@ -22,13 +22,13 @@ const getUser = (req, res) => {
       const user = parsedUserData.find(({ _id: userId }) => userId === id);
 
       if (!user) {
-        res.status(404).send({ message: 'User ID not found' });
+        res.status(NOT_FOUND_ERROR).send({ message: 'User ID not found' });
       } else {
         res.send({ data: user });
       }
     })
     .catch(() => {
-      res.status(500).send({ message: 'An error has occurred with the server' });
+      res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
     });
 };
 
@@ -37,11 +37,73 @@ const createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'An error occurred while creating user' }));
+    .catch((err) => {
+      if(err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`});
+      } else {
+        res.status(INT_SERVER_ERROR).send({ message: 'An error occurred while creating user' });
+      }
+    });
 };
+
+const updateUser = (req, res) => {
+  const { name, about } = req.body;
+  const { id } = req.user._id;
+
+  User.findByIdAndUpdate(
+    id,
+    { name, about },
+    {
+      new: true,
+      runValidators: true,
+      upsert: true
+    })
+    .orFail(() => {
+      const error = new Error('User ID not found');
+      error.statusCode = NOT_FOUND_ERROR;
+      throw error;
+    })
+    .then((user) => res.send({ data: user }))
+    .catch(() => {
+      if (err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`});
+      } else {
+        res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
+      }
+    });
+}
+
+const updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+  const { id } = req.user._id;
+
+  User.findByIdAndUpdate(
+    id,
+    { avatar },
+    {
+      new: true,
+      runValidators: true,
+      upsert: true
+    })
+    .orFail(() => {
+      const error = new Error('User ID not found');
+      error.statusCode = NOT_FOUND_ERROR;
+      throw error;
+    })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`});
+      } else {
+        res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
+      }
+    });
+}
 
 module.exports = {
   getUser,
   getUsers,
   createUser,
+  updateUser,
+  updateAvatar,
 };

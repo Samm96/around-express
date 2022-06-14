@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+const { INVALID_DATA_ERROR, NOT_FOUND_ERROR, INT_SERVER_ERROR } = require('../utils/errors');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -6,7 +7,7 @@ const getCards = (req, res) => {
       res.send(JSON.parse(cards));
     })
     .catch(() => {
-      res.status(500).send({ message: 'An error has occurred with the server' });
+      res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
     });
 };
 
@@ -19,16 +20,28 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'An error has occurred with the server' })); // placeholder
+    .catch((err) => {
+
+      if (err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`});
+      } else {
+        res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
+      }
+      });
 };
 
 const deleteCard = (req, res) => {
   const { id } = req.params;
 
   Card.findById(id)
+    .orFail(() => {
+      const error = new Error('Card ID not found');
+      error.statusCode = NOT_FOUND_ERROR;
+      throw error;
+    })
     .then((card) => Card.deleteOne(card))
     .then(() => res.send({ data: card}))
-    .catch(() => res.status(500).send({ message: 'An error has occurred with the server' })); // placeholder
+    .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
 };
 
 module.exports = {
