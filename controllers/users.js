@@ -1,11 +1,7 @@
-const fsPromises = require('fs').promises;
-const path = require('path');
 const User = require('../models/user');
 
-const USERS_PATH = path.join(__dirname, '../data/users.json');
-
 const getUsers = (req, res) => {
-  fsPromises.readFile(USERS_PATH, { encoding: 'utf8' })
+  User.find({})
     .then((users) => {
       res.send(JSON.parse(users));
     })
@@ -15,10 +11,10 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  fsPromises.readFile(USERS_PATH, { encoding: 'utf8' })
+  // the specific variable specified in the get request (the ID of the URL)
+  const { id } = req.params;
+  User.findById(id)
     .then((users) => {
-    // the specific variable specified in the get request (the ID of the URL)
-      const { id } = req.params;
       // turn that data into a JavaScript object
       const parsedUserData = JSON.parse(users);
       // find the id that has been requested in the JavaScript object

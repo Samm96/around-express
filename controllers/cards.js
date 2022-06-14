@@ -1,11 +1,7 @@
-const path = require('path');
-const fsPromises = require('fs').promises;
-const Card = require('../models/cards');
-
-const CARDS_PATH = path.join(__dirname, '../data/cards.json');
+const Card = require('../models/card');
 
 const getCards = (req, res) => {
-  fsPromises.readFile(CARDS_PATH, { encoding: 'utf8' })
+  Card.find({})
     .then((cards) => {
       res.send(JSON.parse(cards));
     })

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const linkRegex = require('../utils/regex');
+const { linkRegex } = require('../utils/regex');
 
 const userSchema = new mongoose.Schema({
   name: {

@@ -11,6 +11,8 @@ mongoose.connect('mongodb://localhost:27017/aroundb');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(routes);
+
 // temp authorization solution
 app.use((req, res, next) => {
   req.user = {
@@ -20,7 +22,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(routes);
 
 app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
