@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const linkRegex = require('../utils/regex');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -13,7 +14,7 @@ const cardSchema = new mongoose.Schema({
     required: [true, 'Required field'],
     validate: {
       validator: (v) => {
-        return /(^http|https)?:\/\/?(^www\.)?\S{1,}\.[a-z]{3}?\/\S{1,}/.test(v);
+        return linkRegex.test(v);
       },
       message: 'This is not a valid URL'
     },
