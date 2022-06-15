@@ -3,6 +3,11 @@ const { INVALID_DATA_ERROR, NOT_FOUND_ERROR, INT_SERVER_ERROR } = require('../ut
 
 const getUsers = (req, res) => {
   User.find({})
+    .orFail(() => {
+      const error = new Error('List of users not found');
+      error.statusCode = NOT_FOUND_ERROR;
+      throw error;
+    })
     .then((users) => {
       res.send(JSON.parse(users));
     })
