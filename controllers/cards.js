@@ -44,8 +44,30 @@ const deleteCard = (req, res) => {
     .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
 };
 
+const likeCard = (req, res) => {
+  const { id } = req.user._id;
+
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: id } },
+    { new: true },
+  );
+};
+
+const dislikeCard = (req, res) => {
+  const { id } = req.user._id;
+
+  Card.findById(
+    req.params.cardId,
+    { $pull: { likes: id } },
+    { new: true },
+  );
+}
+
 module.exports = {
   getCards,
   createCard,
   deleteCard,
+  likeCard,
+  dislikeCard,
 };
