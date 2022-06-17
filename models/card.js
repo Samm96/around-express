@@ -5,8 +5,8 @@ const cardSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Required field'],
-    minLength: [2, 'The "name" field length is too short (min: 2)'],
-    maxLength: [30,'The "name" field length is too long (max: 30)'],
+    minLength: [2, 'The NAME field length is too short (min: 2)'],
+    maxLength: [30,'The NAME field length is too long (max: 30)'],
   },
 
   link: {
