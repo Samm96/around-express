@@ -24,6 +24,6 @@ const userSchema = new mongoose.Schema({
       message: 'This is not a valid URL'
       },
     },
-  });
+  }, { versionKey: false });
 
 module.exports = mongoose.model('user', userSchema);
