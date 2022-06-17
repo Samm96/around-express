@@ -9,7 +9,7 @@ const getUsers = (req, res) => {
       throw error;
     })
     .then((users) => {
-      res.send(JSON.parse(users));
+      res.send(users);
     })
     .catch(() => {
       res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
