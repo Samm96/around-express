@@ -34,11 +34,6 @@ const deleteCard = (req, res) => {
   const { id } = req.params;
 
   Card.findById(id)
-    .orFail(() => {
-      const error = new Error('Card ID not found');
-      error.statusCode = NOT_FOUND_ERROR;
-      throw error;
-    })
     .then((card) => Card.deleteOne(card))
     .then((card) => res.send({ data: card }))
     .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
@@ -57,7 +52,7 @@ const likeCard = (req, res) => {
 const dislikeCard = (req, res) => {
   const { id } = req.user._id;
 
-  Card.findById(
+  Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: id } },
     { new: true },
