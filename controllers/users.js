@@ -43,7 +43,7 @@ const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if(err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`});
       } else {
         res.status(INT_SERVER_ERROR).send({ message: 'An error occurred while creating user' });
@@ -61,15 +61,16 @@ const updateUser = (req, res) => {
     {
       new: true,
       runValidators: true,
-      upsert: true
-    })
+      upsert: true,
+    },
+  )
     .orFail(() => {
       const error = new Error('User ID not found');
       error.statusCode = NOT_FOUND_ERROR;
       throw error;
     })
     .then((user) => res.send({ data: user }))
-    .catch(() => {
+    .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`});
       } else {
@@ -88,8 +89,9 @@ const updateAvatar = (req, res) => {
     {
       new: true,
       runValidators: true,
-      upsert: true
-    })
+      upsert: true,
+    },
+  )
     .orFail(() => {
       const error = new Error('User ID not found');
       error.statusCode = NOT_FOUND_ERROR;
@@ -98,12 +100,12 @@ const updateAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`});
+        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
       } else {
         res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
       }
     });
-}
+};
 
 module.exports = {
   getUser,

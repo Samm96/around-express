@@ -6,7 +6,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Required field'],
     minLength: [2, 'The NAME field length is too short (min: 2)'],
-    maxLength: [30,'The NAME field length is too long (max: 30)'],
+    maxLength: [30, 'The NAME field length is too long (max: 30)'],
   },
 
   link: {
@@ -14,7 +14,7 @@ const cardSchema = new mongoose.Schema({
     required: [true, 'Required field'],
     validate: {
       validator: (v) => linkRegex.test(v),
-      message: 'This is not a valid URL'
+      message: 'This is not a valid URL',
     },
   },
 
