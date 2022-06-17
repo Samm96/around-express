@@ -4,7 +4,7 @@ const { INVALID_DATA_ERROR, NOT_FOUND_ERROR, INT_SERVER_ERROR } = require('../ut
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
-      res.send(JSON.parse(cards));
+      res.send(cards);
     })
     .catch(() => {
       res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
