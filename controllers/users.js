@@ -20,11 +20,12 @@ const getUser = (req, res) => {
   // the specific variable specified in the get request (the ID of the URL)
   const { id } = req.params;
   User.findById(id)
-    .then((users) => {
+    .then((user) => {
+      //console.log(users);
       // turn that data into a JavaScript object
-      const parsedUserData = JSON.parse(users);
+      //const parsedUserData = users;
       // find the id that has been requested in the JavaScript object
-      const user = parsedUserData.find(({ _id: userId }) => userId === id);
+      //const user = parsedUserData.find(({ _id: userId }) => userId === id);
 
       if (!user) {
         res.status(NOT_FOUND_ERROR).send({ message: 'User ID not found' });
