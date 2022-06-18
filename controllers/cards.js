@@ -1,5 +1,7 @@
 const Card = require('../models/card');
-const { INVALID_DATA_ERROR, NOT_FOUND_ERROR, INT_SERVER_ERROR } = require('../utils/errors');
+const {
+  INVALID_DATA_ERROR_CODE, NOT_FOUND_ERROR_CODE, INT_SERVER_ERROR_CODE, CAST_ERROR_CODE,
+} = require('../utils/errors');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -7,7 +9,7 @@ const getCards = (req, res) => {
       res.send(cards);
     })
     .catch(() => {
-      res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
+      res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
     });
 };
 
@@ -23,9 +25,9 @@ const createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+        res.status(INVALID_DATA_ERROR_CODE).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
       } else {
-        res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
+        res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
       }
     });
 };
@@ -36,12 +38,20 @@ const deleteCard = (req, res) => {
   Card.findById(cardId)
     .orFail(() => {
       const error = new Error('Card ID not found');
-      error.statusCode = NOT_FOUND_ERROR;
+      error.statusCode = NOT_FOUND_ERROR_CODE;
       throw error;
     })
     .then((card) => Card.deleteOne(card))
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(CAST_ERROR_CODE).send({ message: 'Card ID not valid' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Card ID not found' });
+      } else {
+        res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
+      }
+    });
 };
 
 const likeCard = (req, res) => {
@@ -53,7 +63,15 @@ const likeCard = (req, res) => {
     .then((user) => {
       res.send({ data: user });
     })
-    .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(CAST_ERROR_CODE).send({ message: 'Card ID not valid' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Card ID not found' });
+      } else {
+        res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
+      }
+    });
 };
 
 const dislikeCard = (req, res) => {
@@ -65,7 +83,15 @@ const dislikeCard = (req, res) => {
     .then((user) => {
       res.send({ data: user });
     })
-    .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(CAST_ERROR_CODE).send({ message: 'Card ID not valid' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'Card ID not found' });
+      } else {
+        res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
+      }
+    });
 };
 
 module.exports = {

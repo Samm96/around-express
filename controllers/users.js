@@ -1,18 +1,20 @@
 const User = require('../models/user');
-const { INVALID_DATA_ERROR, NOT_FOUND_ERROR, INT_SERVER_ERROR } = require('../utils/errors');
+const {
+  INVALID_DATA_ERROR_CODE, NOT_FOUND_ERROR_CODE, INT_SERVER_ERROR_CODE, CAST_ERROR_CODE,
+} = require('../utils/errors');
 
 const getUsers = (req, res) => {
   User.find({})
     .orFail(() => {
       const error = new Error('List of users not found');
-      error.statusCode = NOT_FOUND_ERROR;
+      error.statusCode = NOT_FOUND_ERROR_CODE;
       throw error;
     })
     .then((users) => {
       res.send(users);
     })
     .catch(() => {
-      res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
+      res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
     });
 };
 
@@ -27,13 +29,19 @@ const getUser = (req, res) => {
       // const user = parsedUserData.find(({ _id: userId }) => userId === id);
 
       if (!user) {
-        res.status(NOT_FOUND_ERROR).send({ message: 'User ID not found' });
+        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'User ID not found' });
       } else {
         res.send({ data: user });
       }
     })
-    .catch(() => {
-      res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(CAST_ERROR_CODE).send({ message: 'User ID not valid' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'User ID not found' });
+      } else {
+        res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
+      }
     });
 };
 
@@ -44,9 +52,9 @@ const createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+        res.status(INVALID_DATA_ERROR_CODE).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
       } else {
-        res.status(INT_SERVER_ERROR).send({ message: 'An error occurred while creating user' });
+        res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error occurred while creating user' });
       }
     });
 };
@@ -63,17 +71,16 @@ const updateUser = (req, res) => {
       upsert: false,
     },
   )
-    .orFail(() => {
-      const error = new Error('User ID not found');
-      error.statusCode = NOT_FOUND_ERROR;
-      throw error;
-    })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+      if (err.name === 'CastError') {
+        res.status(CAST_ERROR_CODE).send({ message: 'User ID not valid' });
+      } else if (err.name === 'DocumentNotFoundError') {
+        res.status(NOT_FOUND_ERROR_CODE).send({ message: 'User ID not found' });
+      } else if (err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR_CODE).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
       } else {
-        res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
+        res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
       }
     });
 };
@@ -92,15 +99,17 @@ const updateAvatar = (req, res) => {
   )
     .orFail(() => {
       const error = new Error('User ID not found');
-      error.statusCode = NOT_FOUND_ERROR;
+      error.statusCode = NOT_FOUND_ERROR_CODE;
       throw error;
     })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+      if (err.name === 'CastError') {
+        res.status(CAST_ERROR_CODE).send({ message: 'User ID not valid' });
+      } else if (err.name === 'ValidationError') {
+        res.status(INVALID_DATA_ERROR_CODE).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
       } else {
-        res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
+        res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
       }
     });
 };
