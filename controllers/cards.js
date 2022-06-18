@@ -31,9 +31,9 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  const { id } = req.params;
+  const { cardId } = req.params;
 
-  Card.findById(id)
+  Card.findById(cardId)
     .then((card) => Card.deleteOne(card))
     .then((card) => res.send({ data: card }))
     .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
