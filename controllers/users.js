@@ -21,7 +21,6 @@ const getUser = (req, res) => {
   const { id } = req.params;
   User.findById(id)
     .then((user) => {
-      //console.log(users);
       // turn that data into a JavaScript object
       //const parsedUserData = users;
       // find the id that has been requested in the JavaScript object
@@ -54,10 +53,9 @@ const createUser = (req, res) => {
 
 const updateUser = (req, res) => {
   const { name, about } = req.body;
-  const { id } = req.user._id;
 
   User.findByIdAndUpdate(
-    id,
+    req.user._id,
     { name, about },
     {
       new: true,
@@ -82,10 +80,9 @@ const updateUser = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  const { id } = req.user._id;
 
   User.findByIdAndUpdate(
-    id,
+    req.user._id,
     { avatar },
     {
       new: true,
