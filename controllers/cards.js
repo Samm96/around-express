@@ -3,6 +3,14 @@ const {
   INVALID_DATA_ERROR_CODE, NOT_FOUND_ERROR_CODE, INT_SERVER_ERROR_CODE, CAST_ERROR_CODE,
 } = require('../utils/errors');
 
+const handleServerError = (res) => {
+  res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
+};
+
+const handleInvalidError = (res) => {
+  res.status(INVALID_DATA_ERROR_CODE).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+}
+
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
@@ -25,9 +33,13 @@ const createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR_CODE).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
+        handleInvalidError();
+        // res.status(INVALID_DATA_ERROR_CODE).send({ message:
+        // `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
       } else {
-        res.status(INT_SERVER_ERROR_CODE).send({ message: 'An error has occurred with the server' });
+        handleServerError();
+        // res.status(INT_SERVER_ERROR_CODE).send({
+        // message: 'An error has occurred with the server' });
       }
     });
 };
