@@ -35,7 +35,7 @@ const deleteCard = (req, res) => {
 
   Card.findById(cardId)
     .orFail(() => {
-      const error = new Error ('Card ID not found');
+      const error = new Error('Card ID not found');
       error.statusCode = NOT_FOUND_ERROR;
       throw error;
     })
@@ -50,10 +50,10 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-  .then((user) => {
-    res.send({ data: user });
-  })
-  .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
+    .then((user) => {
+      res.send({ data: user });
+    })
+    .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
 };
 
 const dislikeCard = (req, res) => {
@@ -62,10 +62,10 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-  .then((user) => {
-    res.send({ data: user });
-  })
-  .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
+    .then((user) => {
+      res.send({ data: user });
+    })
+    .catch(() => res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' }));
 };
 
 module.exports = {

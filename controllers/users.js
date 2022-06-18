@@ -22,9 +22,9 @@ const getUser = (req, res) => {
   User.findById(id)
     .then((user) => {
       // turn that data into a JavaScript object
-      //const parsedUserData = users;
+      // const parsedUserData = users;
       // find the id that has been requested in the JavaScript object
-      //const user = parsedUserData.find(({ _id: userId }) => userId === id);
+      // const user = parsedUserData.find(({ _id: userId }) => userId === id);
 
       if (!user) {
         res.status(NOT_FOUND_ERROR).send({ message: 'User ID not found' });
@@ -44,7 +44,7 @@ const createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`});
+        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
       } else {
         res.status(INT_SERVER_ERROR).send({ message: 'An error occurred while creating user' });
       }
@@ -71,12 +71,12 @@ const updateUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`});
+        res.status(INVALID_DATA_ERROR).send({ message: `${Object.values(err.errors).map((error) => error.message).join(', ')}` });
       } else {
         res.status(INT_SERVER_ERROR).send({ message: 'An error has occurred with the server' });
       }
     });
-}
+};
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
